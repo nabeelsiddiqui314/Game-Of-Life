@@ -3,22 +3,19 @@
 
 
 Application::Application() {
-	m_mainWindow.create(sf::VideoMode(1000, 620), "Conway's Game Of Life", sf::Style::Close);
+	m_mainWindow.create(sf::VideoMode(m_cellWidth * (m_cellNumX - 2), m_cellWidth * (m_cellNumY - 2)), "Conway's Game Of Life", sf::Style::Close);
 	srand(time(NULL));
-	for (unsigned short int x = 0; x < 52; x++) {
-		for (unsigned short int y = 0; y < 33; y++) {
-			m_cells[x][y] = new Cell({ (x * 20) - 20, (y * 20) - 20 }, { 20, 20 });
-			if (x == 0 || x == 51 || y == 0 || y == 32) {
+	for (unsigned short int x = 0; x < m_cellNumX; x++) {
+		for (unsigned short int y = 0; y < m_cellNumY; y++) {
+			m_cells[x][y] = new Cell({ (x * m_cellWidth) - m_cellWidth, (y * m_cellWidth) - m_cellWidth }, { m_cellWidth, m_cellWidth });
+			if (x == 0 || x == m_cellNumX - 1 || y == 0 || y == m_cellNumY - 1) {
 				// makes dead cells
 			}
-			else if (rand() % 5 == 0) {
-				//m_cells[x][y]->SetState(ALIVE);
+			else if (rand() % 100 < 25) {
+				m_cells[x][y]->SetState(ALIVE);
 			}
 		}
 	}
-	m_cells[20][10]->SetState(ALIVE);
-	m_cells[20][11]->SetState(ALIVE);
-	m_cells[20][12]->SetState(ALIVE);
 }
 
 
@@ -32,7 +29,7 @@ void Application::Run() {
 		}
 		m_mainWindow.clear();
 
-		if (m_deltaTime.getElapsedTime().asMilliseconds() > 150) {
+		if (m_deltaTime.getElapsedTime().asMilliseconds() > 100) {
 			this->Update();
 			m_deltaTime.restart();
 		}
@@ -43,32 +40,33 @@ void Application::Run() {
 }
 
 void Application::Update() {
-	for (unsigned short int y = 0; y < 33; y++) {
-		for (unsigned short int x = 0; x < 52; x++) {
-			if (x == 0 || x == 51 || y == 0 || y == 32) {
+	for (unsigned short int x = 0; x < m_cellNumX; x++) {
+		for (unsigned short int y = 0; y < m_cellNumY; y++) {
+			if (x == 0 || x == m_cellNumX - 1 || y == 0 || y == m_cellNumY -1) {
 				m_cells[x][y]->SetState(DEAD);
 			}
 			else {
 				switch (m_cells[x][y]->GetState()) {
 				case ALIVE:
 					if (CountNeighbors(x, y) < 2 || CountNeighbors(x, y) > 3) {
-						m_cells[x][y]->SetState(DEAD);
+						this->AddToDeathList(x, y);
 					}
 					break;
 				case DEAD:
 					if (CountNeighbors(x, y) == 3) {
-						m_cells[x][y]->SetState(ALIVE);
+						this->AddToBirthList(x, y);
 					}
 					break;
 				}
 			}
 		}
 	}
+	SpawnAndKill();
 }
 
 void Application::Render() {
-	for (unsigned short int x = 1; x < 51; x++) {
-		for (unsigned short int y = 1; y < 32; y++) {
+	for (unsigned short int x = 1; x < m_cellNumX - 1; x++) {
+		for (unsigned short int y = 1; y < m_cellNumY - 1; y++) {
 			m_cells[x][y]->Render(m_mainWindow);
 		}
 	}
@@ -89,9 +87,28 @@ int Application::CountNeighbors(const int Cx, const int Cy) const {
 	return neighbors;
 }
 
+void Application::AddToDeathList(int x, int y) {
+	m_killCoords.emplace_back(sf::Vector2i(x, y));
+}	
+
+void Application::AddToBirthList(int x, int y) {
+	m_birthCoords.emplace_back(sf::Vector2i(x, y));
+}
+
+void Application::SpawnAndKill() {
+	for (auto& it : m_birthCoords) {
+		m_cells[it.x][it.y]->SetState(ALIVE);
+	}
+	for (auto& it : m_killCoords) {
+		m_cells[it.x][it.y]->SetState(DEAD);
+	}
+	m_birthCoords.clear();
+	m_killCoords.clear();
+}
+
 Application::~Application() {
-	for (unsigned short int x = 0; x < 52; x++) {
-		for (unsigned short int y = 0; y < 33; y++) {
+	for (unsigned short int x = 0; x < m_cellNumX; x++) {
+		for (unsigned short int y = 0; y < m_cellNumY; y++) {
 			delete m_cells[x][y];
 		}
 	}
