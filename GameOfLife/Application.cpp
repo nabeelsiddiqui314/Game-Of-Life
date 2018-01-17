@@ -6,9 +6,14 @@ Application::Application() {
 	m_mainWindow.create(sf::VideoMode(m_cellWidth * (m_cellNumX - 2), m_cellWidth * (m_cellNumY - 2)), "Conway's Game Of Life", sf::Style::Close);
 	srand(time(NULL));
 	
+	m_pixels.create(m_cellNumX * m_cellWidth, m_cellNumY * m_cellWidth, sf::Color::White);
+
+	m_quadBoard.setPosition(-abs(m_cellWidth), -abs(m_cellWidth));
+	m_quadBoard.setSize(sf::Vector2f(m_pixels.getSize().x, m_pixels.getSize().y));
+
 	for (unsigned short int x = 0; x < m_cellNumX; x++) {
 		for (unsigned short int y = 0; y < m_cellNumY; y++) {
-			m_cells[x][y] = new Cell({ (x * m_cellWidth) - m_cellWidth, (y * m_cellWidth) - m_cellWidth }, { m_cellWidth, m_cellWidth });
+			m_cells[x][y] = new Cell(m_pixels, { (x * m_cellWidth), (y * m_cellWidth) }, { m_cellWidth, m_cellWidth });
 		}
 	}
 
@@ -55,7 +60,7 @@ void Application::pollEvent(sf::Event& evnt) {
 		if (!m_hasBegun) { // these cant run during the simulation
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
 				m_mode = EDIT;
-				// editable (will add)
+				this->KillAll();
 			}
 			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::R)) {
 				m_mode = RANDOM;
@@ -108,11 +113,10 @@ void Application::Update() {
 }
 
 void Application::Render() {
-	for (unsigned short int x = 1; x < m_cellNumX - 1; x++) {
-		for (unsigned short int y = 1; y < m_cellNumY - 1; y++) {
-			m_cells[x][y]->Render(m_mainWindow);
-		}
-	}
+	m_quadBoardTex.loadFromImage(m_pixels);
+	m_quadBoard.setTexture(&m_quadBoardTex);
+
+	m_mainWindow.draw(m_quadBoard);
 	m_mainWindow.draw(m_generationText);
 	if (m_mode == NONE) m_mainWindow.draw(m_promptText);
 }

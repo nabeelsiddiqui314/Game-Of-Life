@@ -34,7 +34,11 @@ private:
 private:
 	sf::RenderWindow m_mainWindow;
 
-	Cell* m_cells[72][44];
+	sf::RectangleShape m_quadBoard;
+	sf::Texture        m_quadBoardTex;
+	sf::Image          m_pixels;
+
+	Cell* m_cells[192][124];
 
 	sf::Clock m_deltaTime;
 
@@ -48,9 +52,9 @@ private:
 	sf::Text               m_generationText;
 	sf::Text               m_promptText;
 
-	const int m_cellNumX = 72;
-	const int m_cellNumY = 44;
-	const int m_cellWidth = 15;
+	const int m_cellNumX = 192;
+	const int m_cellNumY = 124;
+	const int m_cellWidth = 5;
 
 	bool m_hasBegun = false;
 };
