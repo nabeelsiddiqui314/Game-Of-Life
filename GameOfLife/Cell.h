@@ -3,8 +3,8 @@
 #include <iostream>
 
 enum State {
-	ALIVE = 0,
-	DEAD = 255
+	ALIVE,
+	DEAD
 };
 
 class Cell
@@ -15,10 +15,12 @@ public:
 public:
 	void SetState(const State& state);
 	const State GetState() const;
+	void SpawnByClick(sf::RenderWindow& window);
 private:
 	State m_state = DEAD;
 	sf::Image& m_pixels;
 	sf::Vector2i m_pos;
 	sf::Vector2i m_size;
+	sf::Color m_cellColor;
 };
 

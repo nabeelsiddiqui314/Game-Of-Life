@@ -6,7 +6,7 @@ Application::Application() {
 	m_mainWindow.create(sf::VideoMode(m_cellWidth * (m_cellNumX - 2), m_cellWidth * (m_cellNumY - 2)), "Conway's Game Of Life", sf::Style::Close);
 	srand(time(NULL));
 	
-	m_pixels.create(m_cellNumX * m_cellWidth, m_cellNumY * m_cellWidth, sf::Color::White);
+	m_pixels.create(m_cellNumX * m_cellWidth, m_cellNumY * m_cellWidth, sf::Color(220, 220, 220));
 
 	m_quadBoard.setPosition(-abs(m_cellWidth), -abs(m_cellWidth));
 	m_quadBoard.setSize(sf::Vector2f(m_pixels.getSize().x, m_pixels.getSize().y));
@@ -42,7 +42,15 @@ void Application::Run() {
 		}
 		m_mainWindow.clear();
 
-		if (m_hasBegun) {
+		if (m_mode == EDIT) {
+			for (unsigned short int x = 0; x < m_cellNumX; x++) {
+				for (unsigned short int y = 0; y < m_cellNumY; y++) {
+					m_cells[x][y]->SpawnByClick(m_mainWindow);
+				}
+			}
+		}
+
+		if (m_hasBegun && !AreAllDead()) {
 			if (m_deltaTime.getElapsedTime().asMilliseconds() > 100) {
 				this->Update();
 				m_deltaTime.restart();
@@ -87,6 +95,9 @@ void Application::pollEvent(sf::Event& evnt) {
 void Application::Update() {
 	for (unsigned short int x = 0; x < m_cellNumX; x++) {
 		for (unsigned short int y = 0; y < m_cellNumY; y++) {
+			if (m_mode == EDIT) {
+				m_cells[x][y]->SpawnByClick(m_mainWindow);
+			}
 			if (x == 0 || x == m_cellNumX - 1 || y == 0 || y == m_cellNumY -1) {
 				m_cells[x][y]->SetState(DEAD);
 			}
@@ -174,6 +185,16 @@ void Application::SpawnAndKill() {
 	}
 	m_birthCoords.clear();
 	m_killCoords.clear();
+}
+
+bool Application::AreAllDead() {
+	bool areAllDead = true;
+	for (unsigned short int x = 0; x < m_cellNumX; x++) {
+		for (unsigned short int y = 0; y < m_cellNumY; y++) {
+			if (m_cells[x][y]->GetState() == ALIVE) areAllDead = false;
+		}
+	}
+	return areAllDead;
 }
 
 Application::~Application() {

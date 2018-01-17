@@ -30,6 +30,8 @@ private:
 
 	void SpawnAndKill();
 
+	bool AreAllDead();
+
 	void pollEvent(sf::Event& evnt);
 private:
 	sf::RenderWindow m_mainWindow;
@@ -38,7 +40,7 @@ private:
 	sf::Texture        m_quadBoardTex;
 	sf::Image          m_pixels;
 
-	Cell* m_cells[192][124];
+	Cell* m_cells[222][124];
 
 	sf::Clock m_deltaTime;
 
@@ -52,7 +54,7 @@ private:
 	sf::Text               m_generationText;
 	sf::Text               m_promptText;
 
-	const int m_cellNumX = 192;
+	const int m_cellNumX = 222;
 	const int m_cellNumY = 124;
 	const int m_cellWidth = 5;
 
