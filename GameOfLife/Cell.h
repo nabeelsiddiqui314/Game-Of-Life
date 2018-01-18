@@ -15,7 +15,7 @@ public:
 public:
 	void SetState(const State& state);
 	const State GetState() const;
-	void SpawnByClick(sf::RenderWindow& window);
+	void SpawnByClick(sf::RenderWindow& window, int offset = 0);
 private:
 	State m_state = DEAD;
 	sf::Image& m_pixels;

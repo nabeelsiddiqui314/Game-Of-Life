@@ -45,7 +45,7 @@ void Application::Run() {
 		if (m_mode == EDIT) {
 			for (unsigned short int x = 0; x < m_cellNumX; x++) {
 				for (unsigned short int y = 0; y < m_cellNumY; y++) {
-					m_cells[x][y]->SpawnByClick(m_mainWindow);
+					m_cells[x][y]->SpawnByClick(m_mainWindow, 5);
 				}
 			}
 		}
@@ -98,7 +98,7 @@ void Application::Update() {
 			if (m_mode == EDIT) {
 				m_cells[x][y]->SpawnByClick(m_mainWindow);
 			}
-			if (x == 0 || x == m_cellNumX - 1 || y == 0 || y == m_cellNumY -1) {
+			if (x == 0 || x == m_cellNumX - 1 || y == 0 || y == m_cellNumY - 1) {
 				m_cells[x][y]->SetState(DEAD);
 			}
 			else {

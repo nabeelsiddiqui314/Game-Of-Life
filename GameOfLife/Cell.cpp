@@ -24,12 +24,12 @@ const State Cell::GetState() const {
 	return m_state;
 }
 
-void Cell::SpawnByClick(sf::RenderWindow& window) {
+void Cell::SpawnByClick(sf::RenderWindow& window, int offset) {
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-		if (sf::Mouse::getPosition(window).x > m_pos.x &&
-			sf::Mouse::getPosition(window).x < m_pos.x + m_size.x &&
-			sf::Mouse::getPosition(window).y > m_pos.y &&
-			sf::Mouse::getPosition(window).y < m_pos.y + m_size.y) {
+		if (sf::Mouse::getPosition(window).x > m_pos.x - offset &&
+			sf::Mouse::getPosition(window).x < m_pos.x + m_size.x - offset &&
+			sf::Mouse::getPosition(window).y > m_pos.y - offset &&
+			sf::Mouse::getPosition(window).y < m_pos.y + m_size.y - offset) {
 			this->SetState(ALIVE);
 		}
 	}
